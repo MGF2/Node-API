@@ -38,9 +38,22 @@ const exp = (req, res) => {
       throw err;
   } else {
     const exps = JSON.parse(data);
-    console.log(exps);
-  }
-  })
+    for (i=0; i < exps.length; i++) {
+      for (var key in exps[i]) {
+        if (key === 'add') {
+          result = sum(exps[i].add.v1,exps[i].add.v2);
+        } if (key === 'sub') {
+          result = sub(exps[i].sub.v1,exps[i].sub.v2);
+        } if (key === 'mul') {
+          result = mul(exps[i].mul.v1,exps[i].mul.v2);
+        } if (key === 'div') {
+          result = div(exps[i].div.v1,exps[i].div.v2);
+        }
+        console.log(result);
+      }
+    }
+   }
+ });
 }
 
 
@@ -65,7 +78,37 @@ const auth = {
   }
  }) */
 
-//to fix
+
+//ROUTES
+app.get('/', general.home)
+app.get('/exp', general.exp)
+app.post('/login', general.login)
+
+app.post('/test', checkToken, auth.testEndopoint)
+app.post('/poll', checkToken, auth.pollEndopoint)
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
+})
+
+//FUNCTIONS
+function sum(a,b) {
+  return a+b;
+}
+
+function sub(a,b) {
+  return a-b;
+}
+
+function mul(a,b) {
+  return a*b;
+}
+
+function div(a,b) {
+  return a/b;
+}
+
+//TOKEN FUNCTION
 function checkToken(req, res, next) {
   const bearerHeader = req.headers["authorization"];
   if (typeof bearerHeader !== 'undefined') {
@@ -77,15 +120,3 @@ function checkToken(req, res, next) {
     res.sendStatus(403)
   }
 }
-
-
-app.get('/', general.home)
-app.get('/exp', general.exp)
-app.post('/login', general.login)
-
-app.post('/test', checkToken, auth.testEndopoint)
-app.post('/poll', checkToken, auth.pollEndopoint)
-
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
