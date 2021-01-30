@@ -31,6 +31,19 @@ const login = (req, res) => {
 
 }
 
+
+/*
+ Bene ottimo lavoro qui.
+
+ Alcuni punti:
+ 1. Sei in una API quindi "throw err" non va bene. Devi sempre ritornare un codice di errore
+  altrimenti il front end non sa che fare.
+ 2. Se metti le varie funzioni "add", "sub" etc. in un array poi puoi chiamarle direttamente usando la chiave
+    exps[i] => key e non ti serve l'IF. Giusto?
+ 3. QUando tutto e' andato a uon fine, ritorna il risultato al chiamante... res.send(...)
+
+*/
+
 const exp = (req, res) => {
   res.send('Sei in exp')
   fs.readFile("expression.json", function(err, data) {
@@ -78,6 +91,14 @@ const auth = {
   }
  }) */
 
+
+ /*
+   Ok. Non hai usato il middleware. Il risultato conseguito funziona, ma non e' scalabile
+   Quando creo un nuovo endpoint devo sempre ricordarmi che ci sono due modi di chiamata:
+   pubblici, senza controllo, e privati con controllo.
+   Immagina se dovessi fare un secondo controllo su un content type per esmpio. Faresti un terzo modo di chiamata?
+   I middleware "app,use" ti facilitano il lavoro.... 
+ */
 
 //ROUTES
 app.get('/', general.home)
