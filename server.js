@@ -47,18 +47,20 @@ const login = (req, res) => {
 var myfunctions = {add, sub, div, mul};
 
 const exp = (req, res) => {
-  res.send('Sei in exp')
+
   fs.readFile("expression.json", function(err, data) {
     if (err) {
-      res.sendStatus(403)
+      res.sendStatus(502)
   } else {
     const exps = JSON.parse(data);
+    var results = [];
     for (i=0; i < exps.length; i++) {
       for (var key in exps[i]) {
         result = myfunctions[key](exps[i][key].v1,exps[i][key].v2);
-        console.log(result);
+        results.push(result);
       }
     }
+    res.send(results)
    }
  });
 }
