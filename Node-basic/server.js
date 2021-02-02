@@ -77,7 +77,7 @@ const auth = {
   pollEndopoint
 }
 
-
+//controllo da fare su tutte- da correggere
   router.use(function (req, res, next) {
    if (checkToken(req)) {
      next()
