@@ -3,9 +3,9 @@ const faker = require('faker');
 const createFakeTransaction = () => ({
    amount: faker.finance.amount(),
    description: faker.random.words(25),
-   created_at: faker.date.past(),
    issuer: faker.random.uuid(),
-   beneficiary: faker.random.uuid()
+   beneficiary: faker.random.uuid(),
+   ethereum_id: faker.random.uuid()
 });
 
 exports.seed = async function(knex, Promise) {

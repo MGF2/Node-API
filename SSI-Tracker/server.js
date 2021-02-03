@@ -1,4 +1,5 @@
 const express = require('express')
+const redis = require("redis")
 const db = require("./data/db.js")
 const app = express()
 const port = 3000
@@ -14,10 +15,16 @@ const home = (req, res) => {
 
 const tracking = async (req, res) => {
   //get all
-  const tracking = await db('trackings');
-  //--add errors--
-  res.json({tracking});
+  try {
+    const tracking = await db('trackings');
+    res.json({tracking});
+  } catch (err) {
+   //or send error
+    res.sendStatus(502);
+  }
+
 }
+
 
 //GENERAL
 const general = {

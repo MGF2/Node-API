@@ -4,9 +4,10 @@ exports.up = function(knex) {
     table.increments();
     table.double('amount',10,2);
     table.string('description');
-    table.date('created_at');
+    table.timestamp('created_at').defaultTo(knex.fn.now());
     table.string('issuer',36);
     table.string('beneficiary',36);
+    table.string('ethereum_id',70);
   });
 };
 
