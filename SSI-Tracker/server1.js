@@ -6,6 +6,13 @@ const app = express()
 const port = 3000
 const client = redis.createClient();
 
+/* ****************** PROMISE  **************** */
+const { promisify } = require("util");
+const getAsync = promisify(client.get).bind(client);
+/* **************** PROMISE END **************** */
+
+
+
 //REDIS
 client.on('connect', function() {
   console.log('Redis client connected');
@@ -21,20 +28,18 @@ const home = (req, res) => {
 }
 
 const tracking = (req, res) => {
-  client.get(req.token, (err,reply) => {  // Vediamo se il token e' valido....
-    if (reply && reply.includes('r')) { // Ho il permesso di lettura?
-        try { // This calls are already async (coming from the server...)
-          db('trackings').then((results) => {
-            res.json({results});
-          })
-        } catch (err) {
-        //or send error
-        res.sendStatus(502);
-      }
-      return  // Esci dopo aver completato la funzionalita'
+  if (req.permissions && req.permissions.includes('w')) {
+    try { // This calls are already async (coming from the server...)
+      db('trackings').then((results) => {
+        res.json({results});
+      })
+      return
+    } catch (err) {
+      res.sendStatus(502);
+      return
     }
-    res.sendStatus(403)
-  })  //get all
+  }
+  res.sendStatus(403)
 }
 
 const login = (req, res) => {
@@ -54,13 +59,12 @@ const login = (req, res) => {
 
 // Questa e' la API in Scrittura
 const trackingw = (req, res, cToken) => {
-  client.get(req.token, (err,reply) => {  // Vediamo se il token e' valido....
-    if (reply && reply.includes('w')) { // Ho il permesso di scrittura?
-        res.send('Sei in tracking-p')
-        return  // Esci dopo aver completato la funzionalita'
-    }
-    res.sendStatus(403)
-  })
+  if (req.permissions && req.permissions.includes('w')) {
+    res.send('Sei in tracking-p')
+    return
+  }
+
+  res.sendStatus(403)
 }
 
 
@@ -84,6 +88,8 @@ const private = [
 */
 
 //MIDDLEWARE
+
+// CHeck public / private
 app.use(function (req, res, next) {
   if ( public.includes(req.url) ) {
     next()
@@ -91,6 +97,21 @@ app.use(function (req, res, next) {
     if ( checkToken(req) ) {
       // Il token c'e', ma non sappiamo ancora se e' valido...
       next()
+    }
+  }
+});
+
+
+//CHeck token in session
+app.use(async function (req, res, next) {
+  if ( public.includes(req.url) ) {
+    next()
+  } else { // We had set it in the previous middlewre...
+    try {
+      req.permissions = await getAsync(req.token)
+      next()
+    } catch(e) {
+      res.sendStatus(403)
     }
   }
 });
