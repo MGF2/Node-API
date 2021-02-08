@@ -8,7 +8,7 @@ const client = redis.createClient();
 
 /* ****************** PROMISE  **************** */
 const { promisify } = require("util");
-const getAsync = promisify(client.get).bind(client);
+const getAsync = promisify(client.hgetall).bind(client);
 /* **************** PROMISE END **************** */
 
 
@@ -28,7 +28,7 @@ const home = (req, res) => {
 }
 
 const tracking = (req, res) => {
-  if (req.permissions && req.permissions.includes('w')) {
+  if (req.permissions.trackings && req.permissions.trackings.includes('w')) {
     try { // This calls are already async (coming from the server...)
       db('trackings').then((results) => {
         res.json({results});
@@ -51,15 +51,17 @@ const login = (req, res) => {
   res.json({
     token
   });
-  // set token in redis with value rw
-  client.set(token, "rw");
-  // client.get(token, redis.print);
+
+ // multi set permissions
+  client.hmset(token, "trackings", "rw", "profile", "r");
+  //add client to redis
+  client.sadd(token, "trackings", "rw", "profile", "r");
 }
 
 
 // Questa e' la API in Scrittura
 const trackingw = (req, res, cToken) => {
-  if (req.permissions && req.permissions.includes('w')) {
+  if (req.permissions.trackings && req.permissions.trackings.includes('w')) {
     res.send('Sei in tracking-p')
     return
   }
@@ -81,11 +83,6 @@ const public = [
   '/login'
 ];
 
-/* Non serve, solo le pubbliche vanno testate (che di solito sono poche)
-const private = [
-  '/trackingw'
-];
-*/
 
 //MIDDLEWARE
 

@@ -48,7 +48,7 @@ const login = (req, res) => {
   });
   // set token in redis with value rw
   client.set(token, "rw");
-  // client.get(token, redis.print);
+
 }
 
 
