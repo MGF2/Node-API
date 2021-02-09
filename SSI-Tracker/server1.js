@@ -52,6 +52,19 @@ const login = (req, res) => {
     token
   });
 
+  /* **************** USE AN OBJECT ************** */
+  const permissions = {
+    "trackings": "rw",
+    "profile": "r"
+  }
+
+  client.set(token, JSON.stringify(permissions))
+
+  /**************** Quando lo ricevi nel checktoken .... */
+  /* Fai il parse JSON.parse(valore da Redis) => oggetto originale.
+
+  /* *************************************** */
+
  // multi set permissions
   client.hmset(token, "trackings", "rw", "profile", "r");
   //add client to redis
