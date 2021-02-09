@@ -8,8 +8,11 @@ const client = redis.createClient();
 
 /* ****************** PROMISE  **************** */
 const { promisify } = require("util");
-const getAsync = promisify(client.hgetall).bind(client);
+const getAsync = promisify(client.get).bind(client);
 /* **************** PROMISE END **************** */
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 
 
@@ -28,7 +31,7 @@ const home = (req, res) => {
 }
 
 const tracking = (req, res) => {
-  if (req.permissions.trackings && req.permissions.trackings.includes('w')) {
+  if (req.permissions.trackings && req.permissions.trackings.includes('r')) {
     try { // This calls are already async (coming from the server...)
       db('trackings').then((results) => {
         res.json({results});
@@ -58,24 +61,27 @@ const login = (req, res) => {
     "profile": "r"
   }
 
-  client.set(token, JSON.stringify(permissions))
-
+ client.set(token, JSON.stringify(permissions))
   /**************** Quando lo ricevi nel checktoken .... */
   /* Fai il parse JSON.parse(valore da Redis) => oggetto originale.
-
   /* *************************************** */
-
- // multi set permissions
-  client.hmset(token, "trackings", "rw", "profile", "r");
-  //add client to redis
-  client.sadd(token, "trackings", "rw", "profile", "r");
+ //db size
+//  client.dbsize(redis.print);
 }
 
 
+
+
 // Questa e' la API in Scrittura
-const trackingw = (req, res, cToken) => {
+const trackingw = async (req, res, cToken) => {
+
   if (req.permissions.trackings && req.permissions.trackings.includes('w')) {
-    res.send('Sei in tracking-p')
+
+    const track = await db('trackings').insert(req.body).returning('*')
+
+    console.log('New record created', track)
+    res.json(track)
+
     return
   }
 
@@ -99,6 +105,7 @@ const public = [
 
 //MIDDLEWARE
 
+
 // CHeck public / private
 app.use(function (req, res, next) {
   if ( public.includes(req.url) ) {
@@ -119,6 +126,7 @@ app.use(async function (req, res, next) {
   } else { // We had set it in the previous middlewre...
     try {
       req.permissions = await getAsync(req.token)
+      req.permissions = JSON.parse(req.permissions);
       next()
     } catch(e) {
       res.sendStatus(403)
