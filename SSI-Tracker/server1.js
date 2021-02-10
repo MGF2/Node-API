@@ -5,14 +5,19 @@ const db = require("./data/db.js")
 const app = express()
 const port = 3000
 const client = redis.createClient();
+const { body, checkSchema, validationResult } = require('express-validator');
+/* const { buildCheckFunction } = require('express-validator');
+const checkBody = buildCheckFunction('body'); */
+
 
 /* ****************** PROMISE  **************** */
 const { promisify } = require("util");
 const getAsync = promisify(client.get).bind(client);
 /* **************** PROMISE END **************** */
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
 
 
 
@@ -76,13 +81,33 @@ const login = (req, res) => {
 const trackingw = async (req, res, cToken) => {
 
   if (req.permissions.trackings && req.permissions.trackings.includes('w')) {
+     
+    //NO
+      /* await body('amount').isCurrency().exists({checkFalsy: true}).run(req),
+      await body('description').isString().run(req),
+      await body('issuer').isUUID().notEmpty().exists().run(req),
+      await body('beneficiery').isUUID().notEmpty().exists().run(req), 
+      await body('ethereum_id').isUUID().notEmpty().exists().run(req); */
 
-    const track = await db('trackings').insert(req.body).returning('*')
+      const error = validationResult(req);
 
-    console.log('New record created', track)
-    res.json(track)
-
-    return
+      if (!error.isEmpty()) {
+        res.sendStatus(411).json(error.array())
+        return
+      } else {
+         try {
+          const track = await db('trackings').insert(req.body).returning('*')
+          res.sendStatus(201)
+  
+          console.log('New record created', track)
+          // res.json(track)
+          return
+        } catch (err) {
+          console.log(err)
+          res.sendStatus(412)
+          return
+        }
+      }
   }
 
   res.sendStatus(403)
@@ -147,10 +172,52 @@ function checkToken(req) {
   }
 }
 
+//NO -.-
+const validate = validations => {
+  return async (req, res, next) => {
+      await Promise.all(validations.map(validation => validation.run(req)));
+
+      const errors = validationResult(req);
+      if (errors.isEmpty()) {
+          return next();
+      }
+      res.sendStatus(406).json(error.array())
+  };
+};
+
+//NO 
+const postTrackingSchema = {
+  amount: {
+    isCurrency: true,
+    errorMessage: "Amount must be numeric",
+    notEmpty: true,
+    errorMessage: "Amount cannot be null",
+  },
+  description: {
+    isString: true,
+  },
+  issuer: {
+    isUUID: true,
+    notEmpty: true,
+
+  },
+  beneficiary: {
+    isUUID: true,
+    notEmpty: true,
+
+  },
+  ethereum_id: {
+    isUUID: true,
+    notEmpty: true,
+
+  },
+}
+
+
 //GENERAL ROUTES
 app.get('/', general.home)
 app.get('/tracking', general.tracking)
-app.post('/trackingw', general.trackingw)
+app.post('/trackingw', validate(checkSchema(postTrackingSchema)), general.trackingw)
 app.post('/login', general.login)
 
 
