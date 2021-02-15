@@ -11,9 +11,9 @@ module.exports = {
       port: process.env.PG_PORT || 5432
     },
     migrations: {
-      directory: './data/migrations',
+      directory: './database/migrations',
     },
-    seeds: { directory: './data/seeds' },
+    seeds: { directory: './database/seeds' },
   },
 
   testing: {
@@ -22,13 +22,13 @@ module.exports = {
       host : 'localhost',
       user : 'postgres',
       password : process.env.PG_PASSWORD,
-      database : 'postgres',
+      database : 'test',
       port: process.env.PG_PORT || 5432
     },
     migrations: {
-      directory: './data/migrations',
+      directory: './database/migrations',
     },
-    seeds: { directory: './data/seeds' },
+    seeds: { directory: './database/seeds' },
   },
 
   production: {
@@ -41,8 +41,8 @@ module.exports = {
       port: process.env.PG_PORT || 5432
     },
     migrations: {
-      directory: './data/migrations',
+      directory: './database/migrations',
     },
-    seeds: { directory: './data/seeds' },
+    seeds: { directory: './database/seeds' },
   },
 };

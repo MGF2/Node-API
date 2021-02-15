@@ -1,14 +1,11 @@
 const express = require('express')
 const redis = require("redis")
 const jwt = require("jsonwebtoken")
-const db = require("./data/db.js")
+const db = require("./database/db.js")
 const app = express()
-const port = 3000
+const port = process.env.PG_PORT || 3000
 const client = redis.createClient();
 const { body, checkSchema, validationResult } = require('express-validator');
-/* const { buildCheckFunction } = require('express-validator');
-const checkBody = buildCheckFunction('body'); */
-
 
 /* ****************** PROMISE  **************** */
 const { promisify } = require("util");
@@ -80,24 +77,11 @@ const login = (req, res) => {
 // Questa e' la API in Scrittura
 const trackingw = async (req, res, cToken) => {
 
-  if (req.permissions.trackings && req.permissions.trackings.includes('w')) {
-     
-    //NO
-      /* await body('amount').isCurrency().exists({checkFalsy: true}).run(req),
-      await body('description').isString().run(req),
-      await body('issuer').isUUID().notEmpty().exists().run(req),
-      await body('beneficiery').isUUID().notEmpty().exists().run(req), 
-      await body('ethereum_id').isUUID().notEmpty().exists().run(req); */
+  if (req.permissions && req.permissions.trackings && req.permissions.trackings.includes('w')) {
 
-      const error = validationResult(req);
-
-      if (!error.isEmpty()) {
-        res.sendStatus(411).json(error.array())
-        return
-      } else {
          try {
           const track = await db('trackings').insert(req.body).returning('*')
-          res.sendStatus(201)
+          res.sendStatus(200)
   
           console.log('New record created', track)
           // res.json(track)
@@ -107,11 +91,10 @@ const trackingw = async (req, res, cToken) => {
           res.sendStatus(412)
           return
         }
-      }
+  } else {
+    res.sendStatus(403)
   }
-
-  res.sendStatus(403)
-}
+ }
 
 
 //GENERAL
@@ -175,13 +158,20 @@ function checkToken(req) {
 //NO -.-
 const validate = validations => {
   return async (req, res, next) => {
+    
+    try {
       await Promise.all(validations.map(validation => validation.run(req)));
 
       const errors = validationResult(req);
       if (errors.isEmpty()) {
           return next();
       }
-      res.sendStatus(406).json(error.array())
+      // console.log(errors)
+      res.sendStatus(406)
+    } catch (e) {
+      res.sendStatus(406)
+    }
+      
   };
 };
 
@@ -191,7 +181,6 @@ const postTrackingSchema = {
     isCurrency: true,
     errorMessage: "Amount must be numeric",
     notEmpty: true,
-    errorMessage: "Amount cannot be null",
   },
   description: {
     isString: true,
@@ -224,3 +213,5 @@ app.post('/login', general.login)
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
+
+module.exports = app;
