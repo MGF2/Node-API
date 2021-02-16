@@ -5,7 +5,10 @@ const db = require("./database/db.js")
 const app = express()
 const port = process.env.PG_PORT || 3000
 const client = redis.createClient();
-const { body, checkSchema, validationResult } = require('express-validator');
+const validate = require('./middlewares/validation/validation.js')
+const postTrackingSchema = require('./middlewares/validation/schemas/trackingSchema.js')
+const checkToken = require('./middlewares/token.js')
+const { body, checkSchema } = require('express-validator');
 
 /* ****************** PROMISE  **************** */
 const { promisify } = require("util");
@@ -36,7 +39,9 @@ const tracking = (req, res) => {
   if (req.permissions.trackings && req.permissions.trackings.includes('r')) {
     try { // This calls are already async (coming from the server...)
       db('trackings').then((results) => {
-        res.json({results});
+        res.json({
+          results
+        });
       })
       return
     } catch (err) {
@@ -79,18 +84,18 @@ const trackingw = async (req, res, cToken) => {
 
   if (req.permissions && req.permissions.trackings && req.permissions.trackings.includes('w')) {
 
-         try {
-          const track = await db('trackings').insert(req.body).returning('*')
-          res.sendStatus(200)
-  
-          console.log('New record created', track)
-          // res.json(track)
-          return
-        } catch (err) {
-          console.log(err)
-          res.sendStatus(412)
-          return
-        }
+    try {
+      const track = await db('trackings').insert(req.body).returning('*')
+      res.sendStatus(200)
+
+      console.log('New record created', track)
+      // res.json(track)
+      return
+    } catch (err) {
+      console.log(err)
+      res.sendStatus(412)
+      return
+    }
   } else {
     res.sendStatus(403)
   }
@@ -113,13 +118,12 @@ const public = [
 
 //MIDDLEWARE
 
-
 // CHeck public / private
 app.use(function (req, res, next) {
-  if ( public.includes(req.url) ) {
+  if (public.includes(req.url)) {
     next()
   } else {
-    if ( checkToken(req) ) {
+    if (checkToken(req)) {
       // Il token c'e', ma non sappiamo ancora se e' valido...
       next()
     }
@@ -129,78 +133,18 @@ app.use(function (req, res, next) {
 
 //CHeck token in session
 app.use(async function (req, res, next) {
-  if ( public.includes(req.url) ) {
+  if (public.includes(req.url)) {
     next()
   } else { // We had set it in the previous middlewre...
     try {
       req.permissions = await getAsync(req.token)
       req.permissions = JSON.parse(req.permissions);
       next()
-    } catch(e) {
+    } catch (e) {
       res.sendStatus(403)
     }
   }
 });
-
-//FUNCTIONS
-function checkToken(req) {
-  const bearerHeader = req.headers["authorization"];
-  if (typeof bearerHeader !== 'undefined') {
-    const bearer = bearerHeader.split(" ");
-    const bearerToken = bearer[1];
-    req.token = bearerToken;  // Hai assegnato il token alla req, usalo poi...
-    return true;
-  } else {
-    return false;
-  }
-}
-
-//NO -.-
-const validate = validations => {
-  return async (req, res, next) => {
-    
-    try {
-      await Promise.all(validations.map(validation => validation.run(req)));
-
-      const errors = validationResult(req);
-      if (errors.isEmpty()) {
-          return next();
-      }
-      // console.log(errors)
-      res.sendStatus(406)
-    } catch (e) {
-      res.sendStatus(406)
-    }
-      
-  };
-};
-
-//NO 
-const postTrackingSchema = {
-  amount: {
-    isCurrency: true,
-    errorMessage: "Amount must be numeric",
-    notEmpty: true,
-  },
-  description: {
-    isString: true,
-  },
-  issuer: {
-    isUUID: true,
-    notEmpty: true,
-
-  },
-  beneficiary: {
-    isUUID: true,
-    notEmpty: true,
-
-  },
-  ethereum_id: {
-    isUUID: true,
-    notEmpty: true,
-
-  },
-}
 
 
 //GENERAL ROUTES
