@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "SET NODE_ENV=dev && node server.js",
-    "test": "mocha *test/test.js",
-    "testm": "mocha"
+    "testm": "mocha *test/test.js",
+    "test": "mocha --exit"
   },
   "author": "MGF2",
   "license": "ISC",
