@@ -9,6 +9,12 @@ const checkToken = require('./middlewares/token.js')
 const { checkSchema } = require('express-validator');
 const general = require('./routes/routes');
 
+//SWAGGER
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocument = require('./swagger.json');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+
 // PROMISE
 const { promisify } = require("util");
 const getAsync = promisify(client.get).bind(client);

@@ -1,0 +1,184 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "My Node-API Project CRUD",
+        "description": "My Tracking Application API",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "tags": [{
+        "name": "Trackings",
+        "description": "API for tracking in the system"
+    }],
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+        "JWT": {
+            "type": "apiKey",
+            "name": "token",
+            "in": "header"
+        }
+    },
+    "paths": {
+        "/tracking": {
+            "get": {
+                "tags": [
+                    "Tracking"
+                ],
+                "summary": "Get all trackings in system",
+                "parameters": [
+                    {
+                        "Bearer": {
+                            "type": "apiKey",
+                            "name": "Authorization",
+                            "in": "header"
+                        },
+                        "JWT": {
+                            "type": "apiKey",
+                            "name": "token",
+                            "in": "header"
+                             },
+                        "name": "Authorization",
+                        "scheme": "bearer",
+                        "in": "header",
+                        "description": "Our token with permissions"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK-Trackings List"
+                    },
+                    "403": {
+                        "description": "Forbidden-You do not have permission"
+                    },
+                    "502": {
+                        "description": "Err"
+                    },
+                    "500": {
+                        "description": "Error: Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/trackingw": {
+            "post": {
+                "tags": [
+                    "Trackingw"
+                ],
+                "summary": "Post a new track in system",
+                "parameters": [
+                    
+                        {
+                            "name": "Authorization",
+                            "scheme": "bearer",
+                            "in": "header",
+                            "description": "Our token with permissions"
+                        },
+                        
+                           {
+                            "name": "New Tracking",
+                            "scheme": "Trackingw",
+                            "in":"body",
+                            "description": "Our new record"
+                        }
+                        
+                    
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Error: Bad Request"
+                    },
+                    "406": {
+                        "description": "Error: Not Acceptable"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "login"
+                ],
+                "summary": "Create a new token in system",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "header",
+                        "description": "User login"
+                    }
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Error: Internal Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Trackingw": {
+            "required": [
+                "amount",
+                "issuer",
+                "beneficiery",
+                "ethereum_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type":"integer"
+                },
+                "issuer": {
+                    "type":"string"
+                },
+                "beneficiery": {
+                    "type":"string"
+                },
+                "ethereum_id": {
+                    "type":"string"
+                },
+                "description": {
+                    "type":"string"
+                }
+            }
+        },
+        "Login": {
+            "required": [
+                "id",
+                "myKey"
+            ],
+            "properties": {
+                "id": {
+                    "type":"object"
+                },
+                "myKey": {
+                    "type":"string"
+                }
+            }
+        }
+    }
+    
+}
