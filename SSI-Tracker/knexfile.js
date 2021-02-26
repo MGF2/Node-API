@@ -4,7 +4,7 @@ module.exports = {
   development: {
     client: 'pg',
     connection: {
-      host : 'localhost',
+      host : process.env.PG_HOST || 'db',
       user : 'postgres',
       password : process.env.PG_PASSWORD,
       database : 'postgres',
@@ -19,7 +19,7 @@ module.exports = {
   testing: {
     client: 'pg',
     connection: {
-      host : 'localhost',
+      host : process.env.PG_HOST || 'db',
       user : 'postgres',
       password : process.env.PG_PASSWORD,
       database : 'test',
@@ -34,7 +34,7 @@ module.exports = {
   production: {
     client: 'pg',
     connection: {
-      host : 'localhost',
+      host : process.env.PG_HOST || 'db',
       user : 'postgres',
       password : process.env.PG_PASSWORD,
       database : 'postgres',

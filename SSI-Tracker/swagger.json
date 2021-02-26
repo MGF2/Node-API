@@ -63,7 +63,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK-Trackings List"
+                        "description": "OK-Trackings List",
+                        "schema": {
+                            "$ref": "#/definitions/TrackingList"
+                        }
                     },
                     "403": {
                         "description": "Forbidden-You do not have permission"
@@ -94,16 +97,22 @@
                         
                            {
                             "name": "New Tracking",
-                            "scheme": "Trackingw",
+                            "schema": {
+                                "$ref": "#/definitions/TrackingwInput"
+                            },
                             "in":"body",
                             "description": "Our new record"
-                        }
-                        
+                        } 
+
+
                     
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/TrackingwOutput"
+                            }
                     },
                     "400": {
                         "description": "Error: Bad Request"
@@ -140,7 +149,7 @@
         }
     },
     "definitions": {
-        "Trackingw": {
+        "TrackingwInput": {
             "required": [
                 "amount",
                 "issuer",
@@ -154,8 +163,37 @@
                 "issuer": {
                     "type":"string"
                 },
-                "beneficiery": {
+                "beneficiary": {
                     "type":"string"
+                },
+                "ethereum_id": {
+                    "type":"string"
+                },
+                "description": {
+                    "type":"string"
+                }
+            }
+        },
+        "TrackingwOutput": {
+            "required": [
+                "amount",
+                "issuer",
+                "beneficiery",
+                "ethereum_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type":"integer"
+                },
+                "issuer": {
+                    "type":"string"
+                },
+                "beneficiary": {
+                    "type":"string"
+                },
+                "created_at": {
+                    "type":"string",
+                    "format": "date"
                 },
                 "ethereum_id": {
                     "type":"string"
@@ -175,6 +213,32 @@
                     "type":"object"
                 },
                 "myKey": {
+                    "type":"string"
+                }
+            }
+        },
+        "TrackingsList": {
+            "properties": {
+                "id": {
+                    "type":"integer"
+                },
+                "amount": {
+                    "type":"integer"
+                },
+                "issuer": {
+                    "type":"string"
+                },
+                "beneficiary": {
+                    "type":"string"
+                },
+                "created_at": {
+                    "type":"string",
+                    "format": "date"
+                },
+                "ethereum_id": {
+                    "type":"string"
+                },
+                "description": {
                     "type":"string"
                 }
             }

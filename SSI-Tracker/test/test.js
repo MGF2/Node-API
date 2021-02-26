@@ -36,8 +36,8 @@ describe('/POST login', () => {
                     it('should NOT get all record from db trackings-User DOES NOT HAVE PEMISSION TO READ', (done) => {
                         chai.request(app)
                             .get('/tracking')
-                            // no R permission eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImFtb3VudCI6IjQxIiwiaXNzdWVyIjoiNGNlMWUwMTUtNjYxOS00MDM1LWIyMTEtMTQ5MDhhOWNiOWE5IiwiZGVzY3JpcHRpb24iOiJwb3N0bWFuIG9rb2sgcmVmYWN0b3JpbmciLCJiZW5lZmljaWFyeSI6IjRjZTFlMDE1LTY2MTktNDAzNS1iMjExLTE0OTA4YTljYjlhOSIsImV0aGVyZXVtX2lkIjoiNGNlMWUwMTUtNjYxOS00MDM1LWIyMTEtMTQ5MDhhOWNiOWE5In0sImlhdCI6MTYxMzY1OTY2Nn0.KpiNMQo4VLAvEem7No0xBwIOtp2IJdjtEEzvUVwuqnI
-                            .set("Authorization", "Bearer " + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImFtb3VudCI6IjQxIiwiaXNzdWVyIjoiNGNlMWUwMTUtNjYxOS00MDM1LWIyMTEtMTQ5MDhhOWNiOWE5IiwiZGVzY3JpcHRpb24iOiJwb3N0bWFuIG9rb2sgcmVmYWN0b3JpbmciLCJiZW5lZmljaWFyeSI6IjRjZTFlMDE1LTY2MTktNDAzNS1iMjExLTE0OTA4YTljYjlhOSIsImV0aGVyZXVtX2lkIjoiNGNlMWUwMTUtNjYxOS00MDM1LWIyMTEtMTQ5MDhhOWNiOWE5In0sImlhdCI6MTYxMzY1OTY2Nn0.KpiNMQo4VLAvEem7No0xBwIOtp2IJdjtEEzvUVwuqnI')
+                            // no R permission eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo1fSwiaWF0IjoxNjE0MzUxMDY0fQ.ty6MAlEGd7qg90X8gbtqsidvd2ghuy1NBuTWrBD92x8
+                            .set("Authorization", "Bearer " + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo1fSwiaWF0IjoxNjE0MzUxMDY0fQ.ty6MAlEGd7qg90X8gbtqsidvd2ghuy1NBuTWrBD92x8')
                             .end((err, res) => {
                                 res.should.have.status(403);
                                 done();
@@ -104,8 +104,8 @@ describe('/POST login', () => {
                         }
                             chai.request(app)
                             .post('/trackingw')
-                            // no w permissions eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImFtb3VudCI6IjQxIiwiaXNzdWVyIjoiNGNlMWUwMTUtNjYxOS00MDM1LWIyMTEtMTQ5MDhhOWNiOWE5IiwiZGVzY3JpcHRpb24iOiJwb3N0bWFuIG9rb2sgcmVmYWN0b3JpbmciLCJiZW5lZmljaWFyeSI6IjRjZTFlMDE1LTY2MTktNDAzNS1iMjExLTE0OTA4YTljYjlhOSIsImV0aGVyZXVtX2lkIjoiNGNlMWUwMTUtNjYxOS00MDM1LWIyMTEtMTQ5MDhhOWNiOWE5In0sImlhdCI6MTYxMzY1ODYyN30.ATSPo5IpacWSKYOCBB-RWddqDjEvpU4LjJ9EJh5oreE
-                            .set("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImFtb3VudCI6IjQxIiwiaXNzdWVyIjoiNGNlMWUwMTUtNjYxOS00MDM1LWIyMTEtMTQ5MDhhOWNiOWE5IiwiZGVzY3JpcHRpb24iOiJwb3N0bWFuIG9rb2sgcmVmYWN0b3JpbmciLCJiZW5lZmljaWFyeSI6IjRjZTFlMDE1LTY2MTktNDAzNS1iMjExLTE0OTA4YTljYjlhOSIsImV0aGVyZXVtX2lkIjoiNGNlMWUwMTUtNjYxOS00MDM1LWIyMTEtMTQ5MDhhOWNiOWE5In0sImlhdCI6MTYxMzY1ODYyN30.ATSPo5IpacWSKYOCBB-RWddqDjEvpU4LjJ9EJh5oreE")
+                            // no w permissions eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo1fSwiaWF0IjoxNjE0MzUwOTk3fQ.qG7mbr4yR7ns_xQyqjeaOqh4T-Sj2CuXPjvZXzF7dJ4
+                            .set("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo1fSwiaWF0IjoxNjE0MzUwOTk3fQ.qG7mbr4yR7ns_xQyqjeaOqh4T-Sj2CuXPjvZXzF7dJ4")
                             .send(tracking)
                             .end((err, res) => {
                                 res.should.have.status(403);
