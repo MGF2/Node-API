@@ -2,12 +2,18 @@ const express = require('express')
 const redis = require("redis")
 const app = express()
 const port = process.env.PG_PORT || 3000
-const client = redis.createClient();
+const client = process.env.PG_HOST ? redis.createClient(6379, "localhost") : redis.createClient(6379, "redis")
 const validate = require('./middlewares/validation/validation.js')
 const postTrackingSchema = require('./middlewares/validation/schemas/trackingSchema.js')
 const checkToken = require('./middlewares/token.js')
 const { checkSchema } = require('express-validator');
 const general = require('./routes/routes');
+
+//SWAGGER
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocument = require('./swagger.json');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 // PROMISE
 const { promisify } = require("util");
@@ -76,4 +82,7 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
 
-module.exports = app;
+ module.exports = app;
+
+
+
